@@ -7,8 +7,8 @@
     <home-swiper :banners="banners"></home-swiper>
     <recommend-view :recommends="recommends"></recommend-view>
     <feature-view />
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" />
-    <goods-list :goods="goods['pop'].list"></goods-list>
+    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @itemClick="itemClick" />
+    <goods-list :goods="goods[currentType].list"></goods-list>
   </div>
 </template>
 
@@ -31,7 +31,8 @@ export default {
         pop: { page: 0, list: [] },
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] }
-      }
+      },
+      currentType: "pop"
     };
   },
   //生命周期 - 创建完成（访问当前this实例）
@@ -53,6 +54,7 @@ export default {
     GoodsList
   },
   methods: {
+    //网络请求相关的方法
     getMultidata() {
       getHomeMultidata().then(res => {
         this.banners = res.data.banner.list;
@@ -65,6 +67,20 @@ export default {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
       });
+    },
+    //时间监听方法
+    itemClick(index) {
+      switch (index) {
+        case 0:
+          this.currentType = "pop";
+          break;
+        case 1:
+          this.currentType = "new";
+          break;
+        case 2:
+          this.currentType = "sell";
+          break;
+      }
     }
   }
 };

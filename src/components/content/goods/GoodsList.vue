@@ -1,13 +1,7 @@
 <!--  -->
 <template>
-  <div id="goods">
-    <goods-list-item
-      v-for="(item, index) in goods"
-      :key="index"
-      :goods-item="item"
-    >
-      {{ item }}
-    </goods-list-item>
+  <div class="goods">
+    <goods-list-item v-for="(item, index) in goods" :key="index" :goods-item="item">{{ item }}</goods-list-item>
   </div>
 </template>
 
@@ -39,5 +33,6 @@ export default {
 .goods {
   display: flex;
   flex-wrap: wrap;
+  justify-content: space-evenly;
 }
 </style>
