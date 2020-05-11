@@ -1,22 +1,24 @@
 <!--  -->
 <template>
-  <swiper>
-    <swiper-item v-for="(item, index) in banners" :key="index">
-      <a :href="item.link">
-        <img :src="item.image" alt="" />
-      </a>
-    </swiper-item>
-  </swiper>
+  <div id="goods">
+    <goods-list-item
+      v-for="(item, index) in goods"
+      :key="index"
+      :goods-item="item"
+    >
+      {{ item }}
+    </goods-list-item>
+  </div>
 </template>
 
 <script>
-import { Swiper, SwiperItem } from "components/common/swiper";
+import GoodsListItem from "./GoodsListItem";
 export default {
   data() {
     return {};
   },
   props: {
-    banners: {
+    goods: {
       type: Array,
       default() {
         return [];
@@ -28,11 +30,14 @@ export default {
   //生命周期 - 挂载完成（访问DOM元素）
   mounted() {},
   components: {
-    Swiper,
-    SwiperItem
+    GoodsListItem
   }
 };
 </script>
 <style scoped>
 /* @import url(); 引入css类 */
+.goods {
+  display: flex;
+  flex-wrap: wrap;
+}
 </style>
