@@ -1,7 +1,7 @@
 <!--  -->
 <template>
   <div class="wrapper" ref="wrapper">
-    <div class="content">
+    <div class="slide">
       <slot></slot>
     </div>
   </div>
@@ -29,29 +29,34 @@ export default {
   created() {},
   //生命周期 - 挂载完成（访问DOM元素）
   mounted() {
-    //probeType:0,1不侦测，2手指在滚动过程中侦测，惯性移动不侦测，3只要滚动就侦测
+    //probeType:0,1不侦测，2手指在滚动过程中侦测，惯性移动不侦测，3只要滚动就侦测   this.$refs.wrapper
     this.scroll = new BScroll(this.$refs.wrapper, {
       probeType: this.probeType,
       pullUpLoad: this.pullUpLoad,
       click: true
     });
-    this.scroll.on("scroll", position => {
-      this.$emit("scroll", position);
-    });
-    this.scroll.on("pullingUp", () => {
-      this.$emit("pullingUp");
-    });
+    if (this.probeType === 2 || this.probeType === 3) {
+      this.scroll.on("scroll", position => {
+        this.$emit("scroll", position);
+      });
+    }
+    if (this.pullUpLoad) {
+      this.scroll.on("pullingUp", () => {
+        this.$emit("pullingUp");
+      });
+    }
   },
   methods: {
     scrollTo(x, y, time = 300) {
-      this.scroll.scrollTo(x, y, time);
+      this.scroll && this.scroll.scrollTo(x, y, time);
     },
     finishPullUp() {
       //发送网络请求，数据请求完后
-      this.scroll.finishPullUp();
+      this.scroll && this.scroll.finishPullUp();
     },
     pageRefresh() {
-      this.scroll.refresh();
+      this.scroll && this.scroll.refresh();
+      // console.log("--");
     }
   }
 };
