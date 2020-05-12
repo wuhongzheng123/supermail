@@ -4,11 +4,22 @@
     <nav-bar class="home-nav">
       <div slot="center">购物街</div>
     </nav-bar>
-    <home-swiper :banners="banners"></home-swiper>
-    <recommend-view :recommends="recommends"></recommend-view>
-    <feature-view />
-    <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @itemClick="itemClick" />
-    <goods-list :goods="goods[currentType].list"></goods-list>
+
+    <scroll
+      class="content"
+      ref="scroll"
+      :probe-type="3"
+      @scroll="contentScroll"
+      :pullUpLoad="true"
+      @pullingUp="loadMore"
+    >
+      <home-swiper :banners="banners"></home-swiper>
+      <recommend-view :recommends="recommends"></recommend-view>
+      <feature-view />
+      <tab-control class="tab-control" :titles="['流行', '新款', '精选']" @itemClick="itemClick" />
+      <goods-list :goods="goods[currentType].list"></goods-list>
+    </scroll>
+    <back-top @click.native="backClick" v-show="isShow" />
   </div>
 </template>
 
@@ -19,6 +30,8 @@ import RecommendView from "./childComps/RecommendView";
 import FeatureView from "./childComps/FeatureView";
 import TabControl from "components/content/tabControl/TabControl";
 import GoodsList from "components/content/goods/GoodsList";
+import Scroll from "components/common/scroll/Scroll";
+import BackTop from "components/content/backTop/BackTop";
 
 import { getHomeMultidata, getHomeGoods } from "network/home";
 
@@ -32,7 +45,8 @@ export default {
         new: { page: 0, list: [] },
         sell: { page: 0, list: [] }
       },
-      currentType: "pop"
+      currentType: "pop",
+      isShow: false
     };
   },
   //生命周期 - 创建完成（访问当前this实例）
@@ -51,7 +65,9 @@ export default {
     RecommendView,
     FeatureView,
     TabControl,
-    GoodsList
+    GoodsList,
+    Scroll,
+    BackTop
   },
   methods: {
     //网络请求相关的方法
@@ -66,9 +82,11 @@ export default {
       getHomeGoods(type, page).then(res => {
         this.goods[type].list.push(...res.data.list);
         this.goods[type].page += 1;
+
+        this.$refs.scroll.finishPullUp();
       });
     },
-    //时间监听方法
+    //事件监听方法
     itemClick(index) {
       switch (index) {
         case 0:
@@ -81,6 +99,18 @@ export default {
           this.currentType = "sell";
           break;
       }
+    },
+    backClick() {
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+    contentScroll(position) {
+      if (-position.y > 1000) {
+        this.isShow = true;
+      }
+    },
+    loadMore() {
+      this.getGoods(this.currentType);
+      this.$refs.scroll.pageRefresh();
     }
   }
 };
@@ -89,6 +119,8 @@ export default {
 /* @import url(); 引入css类 */
 #home {
   padding-top: 44px;
+  height: 100vh;
+  position: relative;
 }
 .home-nav {
   background-color: var(--color-tint);
@@ -101,6 +133,16 @@ export default {
 }
 .tab-control {
   position: sticky;
+  /* position: absolute; */
   top: 44px;
+}
+.content {
+  /* height: 300px; */
+  overflow: hidden;
+  position: absolute;
+  top: 44px;
+  bottom: 49px;
+  left: 0;
+  right: 0;
 }
 </style>
