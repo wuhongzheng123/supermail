@@ -2,7 +2,7 @@
 <template>
   <div>
     <nav-bar>
-      <div slot="left" class="back">
+      <div slot="left" class="back" @click="backClick">
         <img src="~assets/img/common/back.svg" alt />
       </div>
       <div slot="center" class="title">
@@ -37,6 +37,9 @@ export default {
   methods: {
     titleClick(index) {
       this.currentIndex = index;
+    },
+    backClick() {
+      this.$router.back();
     }
   }
 };
@@ -53,7 +56,7 @@ export default {
 .active {
   color: var(--color-high-text);
 }
-.back {
-  margin-top: 5px;
+.back img {
+  margin-top: 12px;
 }
 </style>
