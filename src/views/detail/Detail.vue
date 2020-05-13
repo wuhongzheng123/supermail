@@ -9,13 +9,20 @@
       <DetailGoodsInfo :detailInfo="detailInfo" @imageLoad="imageLoad" />
       <DetailParamInfo :paramInfo="paramInfo" />
       <DetailCommentInfo :commentInfo="commentInfo" />
+      <GoodsList :goods="recommendList" />
     </scroll>
   </div>
 </template>
 
 <script>
 import DetailNavBar from "./childComps/DetailNarBar";
-import { getDetail, GoodsInfo, Shop, GoodsParam } from "network/detail";
+import {
+  getDetail,
+  GoodsInfo,
+  Shop,
+  GoodsParam,
+  getRecommend
+} from "network/detail";
 import DetailSwiper from "./childComps/DetailSwiper";
 import DetailBaseInfo from "./childComps/DetailBaseInfo";
 import DetailShopInfo from "./childComps/DetailShopInfo";
@@ -23,6 +30,8 @@ import DetailGoodsInfo from "./childComps/DetailGoodsInfo";
 import Scroll from "components/common/scroll/Scroll";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
+import GoodsList from "components/content/goods/GoodsList";
+import { debounce } from "common/utils";
 export default {
   name: "Detail",
   data() {
@@ -71,9 +80,18 @@ export default {
         this.commentInfo = data.rate.list[0];
       }
     });
+    getRecommend().then(res => {
+      this.recommendList = res.data.list;
+    });
   },
   //生命周期 - 挂载完成（访问DOM元素）
-  mounted() {},
+  mounted() {
+    //1.监听图片加载完成
+    const refresh = debounce(this.$refs.scroll.pageRefresh, 500);
+    this.$bus.$on("detailImgaeLoad", () => {
+      refresh();
+    });
+  },
   components: {
     DetailNavBar,
     DetailSwiper,
@@ -82,7 +100,8 @@ export default {
     Scroll,
     DetailGoodsInfo,
     DetailParamInfo,
-    DetailCommentInfo
+    DetailCommentInfo,
+    GoodsList
   },
   methods: {
     imageLoad() {

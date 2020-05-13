@@ -76,9 +76,10 @@ export default {
   mounted() {
     //1.监听图片加载完成
     const refresh = debounce(this.$refs.scroll.pageRefresh, 500);
-    this.$bus.$on("imgaeLoad", () => {
+    this.$bus.$on("homeImgaeLoad", () => {
       // this.$refs.scroll.pageRefresh();
       refresh();
+      console.log("homeImgaeLoad1");
     });
   },
   activated() {

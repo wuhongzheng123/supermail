@@ -15,7 +15,7 @@
       <div class="info-detail">
         <p>{{commentInfo.content}}</p>
         <div class="info-other">
-          <!-- <span class="date">{{commentInfo.created | showDate}}</span> -->
+          <span class="date">{{commentInfo.created | showDate}}</span>
           <span>{{commentInfo.style}}</span>
         </div>
         <div class="info-imgs">
@@ -38,6 +38,11 @@ export default {
         return {};
       }
     }
+  },
+  data() {
+    return {
+      date: null
+    };
   },
   filters: {
     showDate: function(value) {
