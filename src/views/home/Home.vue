@@ -79,7 +79,6 @@ export default {
     this.$bus.$on("homeImgaeLoad", () => {
       // this.$refs.scroll.pageRefresh();
       refresh();
-      console.log("homeImgaeLoad1");
     });
   },
   activated() {
