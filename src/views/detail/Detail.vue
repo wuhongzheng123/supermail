@@ -1,15 +1,15 @@
 <!--  -->
 <template>
   <div id="detail">
-    <DetailNavBar class="detail-nav" />
+    <DetailNavBar class="detail-nav" @titleClick="titleClick" />
     <scroll class="content" ref="scroll">
       <detail-swiper :topImages1="topImages" />
       <DetailBaseInfo :goods="GoodsInfo" />
       <DetailShopInfo :shop="shop" />
       <DetailGoodsInfo :detailInfo="detailInfo" @imageLoad="imageLoad" />
-      <DetailParamInfo :paramInfo="paramInfo" />
-      <DetailCommentInfo :commentInfo="commentInfo" />
-      <GoodsList :goods="recommendList" />
+      <DetailParamInfo :paramInfo="paramInfo" ref="params" />
+      <DetailCommentInfo :commentInfo="commentInfo" ref="comment" />
+      <GoodsList :goods="recommendList" ref="recommend" />
     </scroll>
   </div>
 </template>
@@ -46,7 +46,8 @@ export default {
       commentInfo: {},
       recommendList: [],
       themeTops: [],
-      currentIndex: 0
+      currentIndex: 0,
+      themeTopYs: []
     };
   },
   //生命周期 - 创建完成（访问当前this实例）
@@ -79,6 +80,9 @@ export default {
       if (data.rate.list) {
         this.commentInfo = data.rate.list[0];
       }
+
+      // this.$nextTick(() => {});
+      //根据最新的数据，对应的DOM是已经被渲染出来了，但是图片依然没加载完
     });
     getRecommend().then(res => {
       this.recommendList = res.data.list;
@@ -106,6 +110,16 @@ export default {
   methods: {
     imageLoad() {
       this.$refs.scroll.pageRefresh();
+
+      this.themeTopYs.push(0);
+      this.themeTopYs.push(this.$refs.params.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.comment.$el.offsetTop);
+      this.themeTopYs.push(this.$refs.recommend.$el.offsetTop);
+      // console.log(this.themeTopYs);
+    },
+    titleClick(index) {
+      // console.log(index);
+      this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500);
     }
   }
 };
