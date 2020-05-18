@@ -1,8 +1,13 @@
 <!--  -->
 <template>
   <div id="detail">
-    <DetailNavBar class="detail-nav" @titleClick="titleClick" />
-    <scroll class="content" ref="scroll">
+    <DetailNavBar class="detail-nav" @titleClick="titleClick" ref="navbar" />
+    <scroll
+      class="content"
+      ref="scroll"
+      @scroll="contentScroll"
+      :probe-type="3"
+    >
       <detail-swiper :topImages1="topImages" />
       <DetailBaseInfo :goods="GoodsInfo" />
       <DetailShopInfo :shop="shop" />
@@ -11,6 +16,8 @@
       <DetailCommentInfo :commentInfo="commentInfo" ref="comment" />
       <GoodsList :goods="recommendList" ref="recommend" />
     </scroll>
+    <DetailBottomBar @addToCart="addToCart" />
+    <back-top @click.native="backClick" v-show="isShow" />
   </div>
 </template>
 
@@ -31,6 +38,9 @@ import Scroll from "components/common/scroll/Scroll";
 import DetailParamInfo from "./childComps/DetailParamInfo";
 import DetailCommentInfo from "./childComps/DetailCommentInfo";
 import GoodsList from "components/content/goods/GoodsList";
+import DetailBottomBar from "./childComps/DetailBottomBar";
+import BackTop from "components/content/backTop/BackTop";
+
 import { debounce } from "common/utils";
 export default {
   name: "Detail",
@@ -47,7 +57,9 @@ export default {
       recommendList: [],
       themeTops: [],
       currentIndex: 0,
-      themeTopYs: []
+      themeTopYs: [],
+      currentIndex: 0,
+      isShow: false
     };
   },
   //生命周期 - 创建完成（访问当前this实例）
@@ -105,7 +117,9 @@ export default {
     DetailGoodsInfo,
     DetailParamInfo,
     DetailCommentInfo,
-    GoodsList
+    GoodsList,
+    DetailBottomBar,
+    BackTop
   },
   methods: {
     imageLoad() {
@@ -120,6 +134,43 @@ export default {
     titleClick(index) {
       // console.log(index);
       this.$refs.scroll.scrollTo(0, -this.themeTopYs[index], 500);
+    },
+    contentScroll(position) {
+      // console.log(position);
+      const positionY = -position.y;
+      // if(positionY>0 && positionY<this.themeTopYs[1])
+      let length = this.themeTopYs.length;
+      for (let i in this.themeTopYs) {
+        i = parseInt(i);
+        if (
+          this.currentIndex !== i &&
+          ((i < length - 1 &&
+            positionY >= this.themeTopYs[i] &&
+            positionY < this.themeTopYs[i + 1]) ||
+            (i === length - 1 && positionY >= this.themeTopYs[i]))
+        ) {
+          this.currentIndex = i;
+          this.$refs.navbar.currentIndex = this.currentIndex;
+        }
+      }
+      if (-position.y > 1000) {
+        this.isShow = true;
+      }
+    },
+    backClick() {
+      this.$refs.scroll.scrollTo(0, 0, 500);
+    },
+    addToCart() {
+      // console.log(123);
+      const product = {};
+      product.image = this.topImages[0];
+      product.title = this.GoodsInfo.title;
+      product.desc = this.GoodsInfo.desc;
+      product.price = this.GoodsInfo.nowPrice;
+      product.iid = this.iid;
+      // console.log(product);
+      // this.$store.commit("addCart", product);
+      this.$store.dispatch("addCart", product);
     }
   }
 };
@@ -142,7 +193,7 @@ export default {
   overflow: hidden;
   position: absolute;
   top: 44px;
-  bottom: 49px;
+  bottom: 58px;
   left: 0;
   right: 0;
 }
