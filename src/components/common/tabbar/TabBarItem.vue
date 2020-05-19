@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <div class="tab-bar-item" @click="itemClick">
+  <div class="tab-bar-item ignore" @click="itemClick">
     <div v-if="!isActive">
       <slot name="item-icon"></slot>
     </div>
@@ -29,24 +29,24 @@ export default {
     },
     activeStyle() {
       return this.isActive ? { color: this.activeColor } : {};
-    },
+    }
   },
   props: {
     path: String,
     activeColor: {
       type: String,
-      default: "red",
-    },
+      default: "red"
+    }
   },
   methods: {
     itemClick() {
       this.$router.push(this.path);
-    },
+    }
   },
   //生命周期 - 创建完成（访问当前this实例）
   created() {},
   //生命周期 - 挂载完成（访问DOM元素）
-  mounted() {},
+  mounted() {}
 };
 </script>
 <style scoped>

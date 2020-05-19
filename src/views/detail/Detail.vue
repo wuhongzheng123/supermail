@@ -2,12 +2,7 @@
 <template>
   <div id="detail">
     <DetailNavBar class="detail-nav" @titleClick="titleClick" ref="navbar" />
-    <scroll
-      class="content"
-      ref="scroll"
-      @scroll="contentScroll"
-      :probe-type="3"
-    >
+    <scroll class="content" ref="scroll" @scroll="contentScroll" :probe-type="3">
       <detail-swiper :topImages1="topImages" />
       <DetailBaseInfo :goods="GoodsInfo" />
       <DetailShopInfo :shop="shop" />
@@ -18,6 +13,7 @@
     </scroll>
     <DetailBottomBar @addToCart="addToCart" />
     <back-top @click.native="backClick" v-show="isShow" />
+    <!-- <toast :message="message" :isShow="show" /> -->
   </div>
 </template>
 
@@ -40,6 +36,7 @@ import DetailCommentInfo from "./childComps/DetailCommentInfo";
 import GoodsList from "components/content/goods/GoodsList";
 import DetailBottomBar from "./childComps/DetailBottomBar";
 import BackTop from "components/content/backTop/BackTop";
+// import Toast from "components/common/toast/Toast";
 
 import { debounce } from "common/utils";
 export default {
@@ -60,6 +57,8 @@ export default {
       themeTopYs: [],
       currentIndex: 0,
       isShow: false
+      // show: "",
+      // message: ""
     };
   },
   //生命周期 - 创建完成（访问当前this实例）
@@ -120,6 +119,7 @@ export default {
     GoodsList,
     DetailBottomBar,
     BackTop
+    // Toast
   },
   methods: {
     imageLoad() {
@@ -170,7 +170,15 @@ export default {
       product.iid = this.iid;
       // console.log(product);
       // this.$store.commit("addCart", product);
-      this.$store.dispatch("addCart", product);
+      this.$store.dispatch("addCart", product).then(res => {
+        // this.message = res;
+        // this.show = true;
+        // setTimeout(() => {
+        //   this.message = "";
+        //   this.show = false;
+        // }, 1500);
+        this.$toast.show(res, 1500);
+      });
     }
   }
 };

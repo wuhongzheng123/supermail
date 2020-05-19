@@ -1,6 +1,6 @@
 <!--  -->
 <template>
-  <div id="tab-bar">
+  <div id="tab-bar" class="ignore">
     <slot></slot>
   </div>
 </template>
@@ -14,7 +14,7 @@ export default {
   //生命周期 - 创建完成（访问当前this实例）
   created() {},
   //生命周期 - 挂载完成（访问DOM元素）
-  mounted() {},
+  mounted() {}
 };
 </script>
 <style scoped>
